@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Proprocess script: resampling, trimming, and feature extraction.
+"""Proprocess script: resampling, split and feature extraction.
 
 Copyright (C) 2024 by Akira TAMAMORI
 
@@ -211,12 +211,12 @@ def extract_feature(is_train=True) -> None:
 def main():
     """Perform preprocess."""
     # training data
-    # resample_wav()
-    # split_utterance()
-    # extract_feature()
+    resample_wav()
+    split_utterance()
+    extract_feature()
 
     # test data
-    # resample_wav(is_train=False)
+    resample_wav(is_train=False)
     extract_feature(is_train=False)
 
 
