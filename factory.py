@@ -56,6 +56,9 @@ def get_lr_scheduler(optimizer: Optimizer) -> CosineLRScheduler:
 
     Args:
         optimizer (Optimizer): Wrapped optimizer.
+
+    Returns:
+        lr_scheduler (CosineLRScheduler): cosine scheduler w/ warmup.
     """
     cfg = config.SchedulerConfig()
     lr_scheduler = CosineLRScheduler(
