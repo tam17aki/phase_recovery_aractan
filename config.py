@@ -111,3 +111,4 @@ class EvalConfig:
     pesq_mode: str = "wb"  # "wb": wideband or "nb": narrowband
     stoi_extended: bool = True  # True: extended STOI
     demo_dir: str = "demo/"
+    score_dir: str = "score/"
