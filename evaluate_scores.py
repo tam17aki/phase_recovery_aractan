@@ -450,9 +450,10 @@ def main() -> None:
     """Perform evaluation."""
     # setup directory
     cfg = config.PathConfig()
+    eval_cfg = config.EvalConfig()
     wav_dir = get_wavdir()
     os.makedirs(wav_dir, exist_ok=True)
-    score_dir = os.path.join(cfg.root_dir, "score")
+    score_dir = os.path.join(cfg.root_dir, eval_cfg.score_dir)
     os.makedirs(score_dir, exist_ok=True)
 
     # load DNN parameters
