@@ -42,7 +42,7 @@ You need to prepare the following two datasets from [JSUT corpus](https://sites.
 
 1. Prepare the two datasets form the JSUT corpus. Put wave files in /root_dir/data_dir/trainset_dir/orig and /root_dir/data_dir/evalset_dir/orig, respectively.
 
-2. Modify `config.pyl` according to your environment. It contains settings for experimental conditions. For immediate use, you can edit mainly the directory paths according to your environment.
+2. Modify `config.py` according to your environment. It contains settings for experimental conditions. For immediate use, you can edit mainly the directory paths according to your environment.
 
 3. Run `preprocess.py`. It performs preprocessing steps.
 
