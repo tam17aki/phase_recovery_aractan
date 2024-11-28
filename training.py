@@ -64,7 +64,6 @@ def main() -> None:
 
     # perform training loop
     model.train()
-    epoch_loss = {"plain": 0.0, "refined": 0.0, "refined2": 0.0}
     for epoch in tqdm(
         range(1, cfg.n_epoch + 1),
         desc="Model training",
@@ -72,19 +71,20 @@ def main() -> None:
         " Elapsed Time: {elapsed} ETA: {remaining} ",
         ascii=" #",
     ):
+        epoch_loss = 0.0
         for batch in dataloader:
             optimizer.zero_grad(set_to_none=True)
             loss = loss_func(batch)
-            epoch_loss["plain"] += loss.item()
+            epoch_loss += loss.item()
             loss.backward()
             if cfg.use_grad_clip:
                 nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_max_norm)
             optimizer.step()
         if lr_scheduler is not None:
             lr_scheduler.step(epoch)
-        epoch_loss["plain"] = epoch_loss["plain"] / len(dataloader)
+        epoch_loss = epoch_loss / len(dataloader)
         if epoch == 1 or epoch % cfg.report_interval == 0:
-            print(f"\nEpoch {epoch}: loss={epoch_loss['plain']:.12f}")
+            print(f"\nEpoch {epoch}: loss={epoch_loss:.12f}")
 
     # save model
     model_dir = os.path.join(path_cfg.root_dir, "model")
