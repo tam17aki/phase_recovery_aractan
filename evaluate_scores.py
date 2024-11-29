@@ -196,7 +196,7 @@ def recover_phase(
     Returns:
         phase (ndarray): reconstruced phase. [F, T]
     """
-    logamp_tensor = torch.tensor(logamp).float().unsqueeze(0).cuda()  # [1, T+L+1, K]
+    logamp_tensor = torch.tensor(logamp).float().unsqueeze(0).cuda()
     phase = model(logamp_tensor)
     phase = phase.to("cpu").detach().numpy().copy()
     phase = np.squeeze(phase)
@@ -214,9 +214,9 @@ def _reconst_waveform(model: PhaseRecoveryNet, logamp_path: str) -> None:
         None.
     """
     cfg = config.FeatureConfig()
-    logamp = np.load(logamp_path)  # [F, T]
+    logamp = np.load(logamp_path)
     phase = recover_phase(model, logamp)
-    spec = np.exp(logamp + 1j * phase)  # [F, T]
+    spec = np.exp(logamp + 1j * phase)
     stfft = signal.ShortTimeFFT(
         win=signal.get_window(cfg.window, cfg.win_length),
         hop=cfg.hop_length,
@@ -269,8 +269,8 @@ def _compuate_accuracy(
     Returns:
         acc (ndarray): accuracy of phase estimation (= scaler value).
     """
-    logamp = np.load(logamp_path)  # [K, T]
-    true_phase = np.load(phase_path)  # [K, T]
+    logamp = np.load(logamp_path)
+    true_phase = np.load(phase_path)
     pred_phase = recover_phase(model, logamp)
     pred_phase = np.squeeze(pred_phase)
     acc = np.mean(np.cos(pred_phase - true_phase))
