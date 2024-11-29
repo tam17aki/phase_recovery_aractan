@@ -24,7 +24,6 @@ SOFTWARE.
 
 import os
 from dataclasses import dataclass
-from typing import Tuple
 
 import numpy as np
 import numpy.typing as npt
@@ -42,7 +41,7 @@ class FeatPath:
 
 
 class PhaseRecoveryDataset(
-    Dataset[Tuple[npt.NDArray[np.float32], npt.NDArray[np.float32]]]
+    Dataset[tuple[npt.NDArray[np.float32], npt.NDArray[np.float32]]]
 ):
     """Dataset for training neural net."""
 
@@ -61,7 +60,7 @@ class PhaseRecoveryDataset(
 
     def __getitem__(
         self, idx: int
-    ) -> Tuple[npt.NDArray[np.float32], npt.NDArray[np.float32]]:
+    ) -> tuple[npt.NDArray[np.float32], npt.NDArray[np.float32]]:
         """Get a pair of input and target.
 
         Args:
