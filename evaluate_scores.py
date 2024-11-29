@@ -183,6 +183,7 @@ def compute_lsc(basename: str) -> np.float64:
     return lsc
 
 
+@torch.no_grad()
 def recover_phase(
     model: PhaseRecoveryNet, logamp: npt.NDArray[np.float32]
 ) -> npt.NDArray[np.float32]:
@@ -458,6 +459,7 @@ def main() -> None:
 
     # load DNN parameters
     model = load_checkpoint()
+    model.eval()
 
     # load list of file paths for log-amplitude spectrogram
     logamp_list = load_logamp()
