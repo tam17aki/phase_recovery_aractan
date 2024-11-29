@@ -159,7 +159,7 @@ def compute_lsc(basename: str) -> np.float64:
     preproc_cfg = config.PreProcessConfig()
     eval_wav, _ = sf.read(get_wavname(basename))
     ref_wavname, _ = os.path.splitext(basename)
-    ref_wavname = ref_wavname.split("-")[0]  # remove '_logmag'
+    ref_wavname = ref_wavname.split("-")[0]  # remove '_logamp'
     wav_dir = os.path.join(
         cfg.root_dir, cfg.data_dir, cfg.evalset_dir, preproc_cfg.resample_dir
     )
@@ -300,7 +300,7 @@ def compute_obj_scores(logamp_list: list[str]) -> dict[str, list[np.float64 | fl
     """Compute objective scores; PESQ, STOI and LSC.
 
     Args:
-        logamp_list (list): list of path to the log-magnitude spectrum.
+        logamp_list (list): list of path to the log-amplitude spectrum.
 
     Returns:
         score_dict (dict): dictionary of objective score lists.
@@ -310,16 +310,16 @@ def compute_obj_scores(logamp_list: list[str]) -> dict[str, list[np.float64 | fl
         "stoi": [],
         "lsc": [],
     }
-    for logmag_path in tqdm(
+    for logamp_path in tqdm(
         logamp_list,
         desc="Compute objective scores",
         bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
         " Elapsed Time: {elapsed} ETA: {remaining} ",
         ascii=" #",
     ):
-        score_dict["pesq"].append(compute_pesq(os.path.basename(logmag_path)))
-        score_dict["stoi"].append(compute_stoi(os.path.basename(logmag_path)))
-        score_dict["lsc"].append(compute_lsc(os.path.basename(logmag_path)))
+        score_dict["pesq"].append(compute_pesq(os.path.basename(logamp_path)))
+        score_dict["stoi"].append(compute_stoi(os.path.basename(logamp_path)))
+        score_dict["lsc"].append(compute_lsc(os.path.basename(logamp_path)))
     return score_dict
 
 
