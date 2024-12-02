@@ -111,10 +111,10 @@ class PostNetBlock(nn.Module):
         hid_channels = cfg.hidden_channels_post
         kernel_size = cfg.kernel_size
         self.convs = nn.Sequential(  # full pre-activation
-            nn.BatchNorm1d(hid_channels),
+            nn.BatchNorm1d(cfg.hidden_channels),
             nn.GELU(),
             nn.Conv1d(
-                hid_channels,
+                cfg.hidden_channels,
                 hid_channels,
                 kernel_size,
                 padding=(kernel_size - 1) // 2,
@@ -130,12 +130,12 @@ class PostNetBlock(nn.Module):
             ),
         )
         self.rnn = nn.GRU(
-            cfg.hidden_channels,
-            cfg.hidden_channels,
+            hid_channels,
+            hid_channels,
             batch_first=True,
             bidirectional=True,
         )
-        self.proj = nn.Conv1d(2 * cfg.hidden_channels, cfg.hidden_channels, 1)
+        self.proj = nn.Conv1d(2 * hid_channels, cfg.hidden_channels, 1)
 
     def forward(self, inputs) -> torch.Tensor:
         """Forward propagation."""
