@@ -32,7 +32,7 @@ Mainly, we will use the following scripts:
 | preprocess.py      | Performs pre-processing including feature extraction |
 | dataset.py         | Builds the dataset and dataloader                    |
 | model.py           | Defines the network architecture                     |
-| factory.py         | Defines the optimizer, scheduler, and loss function  |
+| factory.py         | Defines the optimizer and loss function  |
 | training.py        | Trains the model                                     |
 | evaluate_scores.py | Calculates objective sound quality metrics           |
 
