@@ -54,3 +54,7 @@ You need to prepare the following two datasets from [JSUT corpus](https://sites.
 4. Run `training.py`. It performs model training.
 
 5. Run `evaluate_scores.py`. It generates reconstructed audio data and computes objective scores (PESQ, ESTOI, LSC).
+
+## Notice
+The folder `schedulefree` contains a collection of scripts for using RAdamScheduleFree.
+
