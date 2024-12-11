@@ -87,6 +87,7 @@ def main() -> None:
     # save model
     model_dir = os.path.join(path_cfg.root_dir, "model")
     os.makedirs(model_dir, exist_ok=True)
+    optimizer.eval()
     torch.save(
         model.state_dict(), f=os.path.join(model_dir, model_cfg.model_file + ".pth")
     )
