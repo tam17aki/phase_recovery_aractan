@@ -37,7 +37,7 @@ from torch.multiprocessing import set_start_method
 from tqdm import tqdm
 
 import config
-from model import PhaseRecoveryNet
+from model import PhaseRecoveryNet, get_model
 
 
 def load_checkpoint() -> PhaseRecoveryNet:
@@ -52,7 +52,7 @@ def load_checkpoint() -> PhaseRecoveryNet:
     cfg = config.PathConfig()
     model_cfg = config.ModelConfig()
     model_dir = os.path.join(cfg.root_dir, "model")
-    model = PhaseRecoveryNet().cuda()
+    model = get_model()
     model_file = os.path.join(model_dir, model_cfg.model_file + ".pth")
     checkpoint = torch.load(model_file, weights_only=True)
     model.load_state_dict(checkpoint)
