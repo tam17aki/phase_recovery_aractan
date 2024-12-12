@@ -200,6 +200,9 @@ class PhaseRecoveryNet(nn.Module):
 def get_model() -> PhaseRecoveryNet:
     """Instantiate model for phase recovery.
 
+    Args:
+        None.
+
     Returns:
         model (PhaseRecoveryNet): model for phase recovery.
     """
