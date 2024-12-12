@@ -195,3 +195,13 @@ class PhaseRecoveryNet(nn.Module):
         real_part = hidden[:, :n_spec, :]  # [B, F, T]
         phase = torch.atan2(imag_part, real_part)  # [B, F, T]
         return phase
+
+
+def get_model() -> PhaseRecoveryNet:
+    """Instantiate model for phase recovery.
+
+    Returns:
+        model (PhaseRecoveryNet): model for phase recovery.
+    """
+    model = PhaseRecoveryNet().cuda()
+    return model
