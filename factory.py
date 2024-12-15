@@ -83,7 +83,7 @@ class CustomLoss(nn.Module):
         Args:
             model (PhaseRecoveryNet): neural network to estimate phase spectrum.
         """
-        super(nn.Module).__init__()
+        super(nn.Module, self).__init__()
         self.model: PhaseRecoveryNet = model
 
     @override
@@ -120,7 +120,7 @@ class CustomLoss(nn.Module):
         return loss
 
 
-def get_loss(model: PhaseRecoveryNet):
+def get_loss(model: PhaseRecoveryNet) -> CustomLoss:
     """Instantiate customized loss.
 
     Args:
