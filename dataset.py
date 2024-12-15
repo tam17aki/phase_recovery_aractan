@@ -58,7 +58,7 @@ class PhaseRecoveryDataset(
         """
         return len(self.logamp_paths)
 
-    def __getitem__(  # pyright: ignore[reportImplicitOverride]
+    def __getitem__(
         self, idx: int
     ) -> tuple[npt.NDArray[np.float32], npt.NDArray[np.float32]]:
         """Get a pair of input and target.
