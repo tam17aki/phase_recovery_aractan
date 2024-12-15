@@ -57,18 +57,20 @@ def main() -> None:
     model = PhaseRecoveryNet().cuda()
     loss_func = get_loss(model)
     optimizer = get_optimizer(model)
-    lr_scheduler = get_lr_scheduler(optimizer)
+    lr_scheduler = None
+    if cfg.use_scheduler is True:
+        lr_scheduler = get_lr_scheduler(optimizer)
 
     # print summary of the network architecture and the number of parameters.
-    summary(model, depth=4)
+    _ = summary(model, depth=4)
 
     # perform training loop
-    model.train()
+    _ = model.train()
     for epoch in tqdm(
         range(1, cfg.n_epoch + 1),
         desc="Model training",
         bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
-        " Elapsed Time: {elapsed} ETA: {remaining} ",
+        + " Elapsed Time: {elapsed} ETA: {remaining} ",
         ascii=" #",
     ):
         epoch_loss = 0.0
@@ -78,7 +80,7 @@ def main() -> None:
             epoch_loss += loss.item()
             loss.backward()
             if cfg.use_grad_clip:
-                nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_max_norm)
+                _ = nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_max_norm)
             optimizer.step()
         if lr_scheduler is not None:
             lr_scheduler.step(epoch)
