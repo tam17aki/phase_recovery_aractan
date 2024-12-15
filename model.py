@@ -36,7 +36,7 @@ class PreNet(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(nn.Module).__init__()
+        super(nn.Module, self).__init__()
         cfg = config.ModelConfig()
         in_channels = cfg.input_channels
         hid_channels = cfg.hidden_channels
@@ -50,7 +50,8 @@ class PreNet(nn.Module):
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         inputs = inputs - torch.mean(inputs, dim=-1, keepdim=True)
-        return self.net(inputs)
+        outputs: torch.Tensor = self.net(inputs)
+        return outputs
 
 
 @final
@@ -59,7 +60,7 @@ class ResidualBlock(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(nn.Module).__init__()
+        super(nn.Module, self).__init__()
         cfg = config.ModelConfig()
         hid_channels = cfg.hidden_channels
         kernel_size = cfg.kernel_size
@@ -84,10 +85,10 @@ class ResidualBlock(nn.Module):
         )
 
     @override
-    def forward(self, inputs: nn.Module) -> torch.Tensor:
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.convs(inputs)
-        hidden = hidden + inputs
+        hidden: torch.Tensor = hidden + inputs
         return hidden
 
 
@@ -97,7 +98,7 @@ class MiddleNet(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(nn.Module).__init__()
+        super(nn.Module, self).__init__()
         cfg = config.ModelConfig()
         resnet = nn.ModuleList([ResidualBlock() for _ in range(cfg.n_resblock)])
         self.resnet = nn.Sequential(*resnet)
@@ -105,7 +106,7 @@ class MiddleNet(nn.Module):
     @override
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
-        hidden = self.resnet(inputs)
+        hidden: torch.Tensor = self.resnet(inputs)
         return hidden
 
 
@@ -115,7 +116,7 @@ class PostNetBlock(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(nn.Module).__init__()
+        super(nn.Module, self).__init__()
         cfg = config.ModelConfig()
         hid_channels = cfg.hidden_channels_post
         kernel_size = cfg.kernel_size
@@ -152,7 +153,7 @@ class PostNetBlock(nn.Module):
         hidden = self.convs(inputs)
         hidden, _ = self.rnn(hidden.transpose(1, 2))
         hidden = self.proj(hidden.transpose(1, 2))
-        hidden = hidden + inputs
+        hidden: torch.Tensor = hidden + inputs
         return hidden
 
 
@@ -162,13 +163,13 @@ class PostNet(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(nn.Module).__init__()
+        super(nn.Module, self).__init__()
         cfg = config.ModelConfig()
         postnet = nn.ModuleList([PostNetBlock() for _ in range(cfg.n_postblock)])
         self.postnet = nn.Sequential(*postnet)
 
     @override
-    def forward(self, inputs: nn.Module) -> torch.Tensor:
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         outputs = self.postnet(inputs)
         return outputs
@@ -180,7 +181,7 @@ class PhaseRecoveryNet(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(nn.Module).__init__()
+        super(nn.Module, self).__init__()
         model_cfg = config.ModelConfig()
         feat_cfg = config.FeatureConfig()
         assert feat_cfg.n_fft // 2 + 1 == model_cfg.input_channels
