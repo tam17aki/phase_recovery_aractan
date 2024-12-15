@@ -180,7 +180,7 @@ def compute_lsc(basename: str) -> np.float64:
     eval_abs = np.abs(stfft.stft(eval_wav))
     lsc = np.linalg.norm(ref_abs - eval_abs)
     lsc = lsc / np.linalg.norm(ref_abs)
-    lsc = 20 * np.log10(lsc)
+    lsc: np.float64 = 20 * np.log10(lsc)
     return lsc
 
 
@@ -197,9 +197,9 @@ def recover_phase(
         phase (ndarray): reconstruced phase. [F, T]
     """
     logamp_tensor = torch.tensor(logamp).float().unsqueeze(0).cuda()
-    phase = model(logamp_tensor)
-    phase = phase.to("cpu").detach().numpy().copy()
-    phase = np.squeeze(phase)
+    _phase = model(logamp_tensor)
+    _phase = _phase.to("cpu").detach().numpy().copy()
+    phase: npt.NDArray[np.float32] = np.squeeze(_phase)
     return phase
 
 
@@ -259,7 +259,7 @@ def reconst_waveform(model: PhaseRecoveryNet, logamp_list: list[str]) -> None:
 
 def _compuate_accuracy(
     model: PhaseRecoveryNet, logamp_path: str, phase_path: str
-) -> float:
+) -> npt.NDArray[np.float64]:
     """Compute accuracy of phase estimation.
 
     Args:
@@ -274,7 +274,7 @@ def _compuate_accuracy(
     true_phase = np.load(phase_path)
     pred_phase = recover_phase(model, logamp)
     pred_phase = np.squeeze(pred_phase)
-    acc = np.mean(np.cos(pred_phase - true_phase))
+    acc: npt.NDArray[np.float64] = np.mean(np.cos(pred_phase - true_phase))
     return acc
 
 
