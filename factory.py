@@ -33,7 +33,7 @@ import config
 from model import PhaseRecoveryNet
 
 
-def get_optimizer(model: PhaseRecoveryNet) -> Optimizer:
+def get_optimizer(model: PhaseRecoveryNet) -> optim.RAdam | optim.AdamW:
     """Instantiate optimizer.
 
     Args:
