@@ -46,7 +46,7 @@ class PreNet(nn.Module):
             nn.Conv1d(hid_channels, hid_channels, 1),
         )
 
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:  # pyright: ignore[reportImplicitOverride]
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         inputs = inputs - torch.mean(inputs, dim=-1, keepdim=True)
         return self.net(inputs)
@@ -82,7 +82,7 @@ class ResidualBlock(nn.Module):
             ),
         )
 
-    def forward(self, inputs: nn.Module) -> torch.Tensor:  # pyright: ignore[reportImplicitOverride]
+    def forward(self, inputs: nn.Module) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.convs(inputs)
         hidden = hidden + inputs
@@ -100,7 +100,7 @@ class MiddleNet(nn.Module):
         resnet = nn.ModuleList([ResidualBlock() for _ in range(cfg.n_resblock)])
         self.resnet = nn.Sequential(*resnet)
 
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:  # pyright: ignore[reportImplicitOverride]
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.resnet(inputs)
         return hidden
@@ -143,7 +143,7 @@ class PostNetBlock(nn.Module):
         )
         self.proj = nn.Conv1d(2 * hid_channels, cfg.hidden_channels, 1)
 
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:  # pyright: ignore[reportImplicitOverride]
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.convs(inputs)
         hidden, _ = self.rnn(hidden.transpose(1, 2))
@@ -163,7 +163,7 @@ class PostNet(nn.Module):
         postnet = nn.ModuleList([PostNetBlock() for _ in range(cfg.n_postblock)])
         self.postnet = nn.Sequential(*postnet)
 
-    def forward(self, inputs: nn.Module) -> torch.Tensor:  # pyright: ignore[reportImplicitOverride]
+    def forward(self, inputs: nn.Module) -> torch.Tensor:
         """Forward propagation."""
         outputs = self.postnet(inputs)
         return outputs
@@ -186,7 +186,7 @@ class PhaseRecoveryNet(nn.Module):
             model_cfg.hidden_channels, 2 * (feat_cfg.n_fft // 2 + 1), 1
         )
 
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:  # pyright: ignore[reportImplicitOverride]
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Recover phase from log-amplitude spectrum.
 
         Args:
