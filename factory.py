@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import torch
-from timm.scheduler import CosineLRScheduler
+from timm.scheduler.cosine_lr import CosineLRScheduler
 from torch import nn, optim
 from torch.optim.optimizer import Optimizer
 
@@ -81,8 +81,8 @@ class CustomLoss(nn.Module):
         Args:
             model (PhaseRecoveryNet): neural network to estimate phase spectrum.
         """
-        super().__init__()
-        self.model = model
+        super(nn.Module).__init__()
+        self.model: PhaseRecoveryNet = model
 
     def forward(self, batch: tuple[torch.Tensor, torch.Tensor]) -> torch.Tensor:
         """Compute loss function.
@@ -96,7 +96,7 @@ class CustomLoss(nn.Module):
         logamp, target_phase = batch
         logamp = logamp.cuda().float()
         target_phase = target_phase.cuda().float()
-        pred_phase = self.model(logamp)
+        pred_phase: torch.Tensor = self.model(logamp)
 
         target_ifreq = torch.diff(target_phase, dim=2)
         target_grd = -torch.diff(target_phase, dim=1)
@@ -117,7 +117,7 @@ class CustomLoss(nn.Module):
         return loss
 
 
-def get_loss(model):
+def get_loss(model: PhaseRecoveryNet):
     """Instantiate customized loss.
 
     Args:
