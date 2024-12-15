@@ -26,7 +26,7 @@ import os
 
 import torch
 from torch import nn
-from torchinfo import summary
+from torchinfo import summary  # pyright: ignore[reportUnknownVariableType]
 from tqdm import tqdm
 
 import config
@@ -66,7 +66,7 @@ def main() -> None:
 
     # perform training loop
     _ = model.train()
-    for epoch in tqdm(
+    for epoch in tqdm(  # pyright: ignore[reportUnknownVariableType]
         range(1, cfg.n_epoch + 1),
         desc="Model training",
         bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
@@ -83,7 +83,7 @@ def main() -> None:
                 _ = nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_max_norm)
             optimizer.step()
         if lr_scheduler is not None:
-            lr_scheduler.step(epoch)
+            lr_scheduler.step(epoch)  # pyright: ignore[reportUnknownArgumentType]
         epoch_loss = epoch_loss / len(dataloader)
         if epoch == 1 or epoch % cfg.report_interval == 0:
             print(f"\nEpoch {epoch}: loss={epoch_loss:.12f}")
@@ -91,7 +91,7 @@ def main() -> None:
     # save model
     model_dir = os.path.join(path_cfg.root_dir, "model")
     os.makedirs(model_dir, exist_ok=True)
-    torch.save(
+    torch.save(  # pyright: ignore[reportUnknownMemberType]
         model.state_dict(), f=os.path.join(model_dir, model_cfg.model_file + ".pth")
     )
 
