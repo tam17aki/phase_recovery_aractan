@@ -171,7 +171,7 @@ class PostNet(nn.Module):
     @override
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
-        outputs = self.postnet(inputs)
+        outputs: torch.Tensor = self.postnet(inputs)
         return outputs
 
 
