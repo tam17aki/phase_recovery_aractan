@@ -114,7 +114,7 @@ def split_utterance() -> None:
             basename, ext = os.path.splitext(wav_name)
             split_fn = basename + "_" + str(i) + ext
             out_file = os.path.join(out_dir, os.path.basename(split_fn))
-            split_audio = audio[i * 1000 : (i + sec_per_split) * 1000]
+            split_audio = audio[i * 1000 : int((i + sec_per_split) * 1000)]
             if split_audio.duration_seconds > (sec_per_split - 0.01):
                 split_audio.export(out_file, format="wav")
 
@@ -147,7 +147,7 @@ def _extract_feature(utt_id: str, feat_dir: str, is_train: bool) -> None:
     wav_file = os.path.join(wav_dir, utt_id + ".wav")
     audio, rate = sf.read(wav_file)
     if audio.dtype in [np.int16, np.int32]:
-        audio = (audio / np.iinfo(audio.dtype).max).astype(np.float64)  # type:ignore
+        audio = (audio / np.iinfo(audio.dtype).max).astype(np.float64)
     audio = audio.astype(np.float64)
 
     stfft = signal.ShortTimeFFT(
