@@ -31,8 +31,9 @@ import numpy.typing as npt
 import soundfile as sf
 import torch
 from pesq import pesq
-from pystoi import stoi
+from pystoi.stoi import stoi
 from scipy import signal
+from scipy.signal.windows import get_window
 from torch.multiprocessing import set_start_method
 from tqdm import tqdm
 
@@ -55,7 +56,7 @@ def load_checkpoint() -> PhaseRecoveryNet:
     model = PhaseRecoveryNet().cuda()
     model_file = os.path.join(model_dir, model_cfg.model_file + ".pth")
     checkpoint = torch.load(model_file, weights_only=True)
-    model.load_state_dict(checkpoint)
+    _ = model.load_state_dict(checkpoint)
     return model
 
 
@@ -169,7 +170,7 @@ def compute_lsc(basename: str) -> np.float64:
     else:
         reference = reference[: eval_wav.size]
     stfft = signal.ShortTimeFFT(
-        win=signal.get_window(feat_cfg.window, feat_cfg.win_length),
+        win=get_window(feat_cfg.window, feat_cfg.win_length),
         hop=feat_cfg.hop_length,
         fs=rate,
         mfft=feat_cfg.n_fft,
@@ -183,7 +184,6 @@ def compute_lsc(basename: str) -> np.float64:
     return lsc
 
 
-@torch.no_grad()
 def recover_phase(
     model: PhaseRecoveryNet, logamp: npt.NDArray[np.float32]
 ) -> npt.NDArray[np.float32]:
@@ -215,10 +215,11 @@ def _reconst_waveform(model: PhaseRecoveryNet, logamp_path: str) -> None:
     """
     cfg = config.FeatureConfig()
     logamp = np.load(logamp_path)
-    phase = recover_phase(model, logamp)
+    with torch.no_grad():
+        phase = recover_phase(model, logamp)
     spec = np.exp(logamp + 1j * phase)
     stfft = signal.ShortTimeFFT(
-        win=signal.get_window(cfg.window, cfg.win_length),
+        win=get_window(cfg.window, cfg.win_length),
         hop=cfg.hop_length,
         fs=cfg.sample_rate,
         mfft=cfg.n_fft,
@@ -250,7 +251,7 @@ def reconst_waveform(model: PhaseRecoveryNet, logamp_list: list[str]) -> None:
             futures,
             desc="Reconstruct waveform",
             bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
-            " Elapsed Time: {elapsed} ETA: {remaining} ",
+            + " Elapsed Time: {elapsed} ETA: {remaining} ",
             ascii=" #",
         ):
             future.result()  # return None
@@ -315,7 +316,7 @@ def compute_obj_scores(logamp_list: list[str]) -> dict[str, list[np.float64 | fl
         logamp_list,
         desc="Compute objective scores",
         bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
-        " Elapsed Time: {elapsed} ETA: {remaining} ",
+        + " Elapsed Time: {elapsed} ETA: {remaining} ",
         ascii=" #",
     ):
         score_dict["pesq"].append(compute_pesq(os.path.basename(logamp_path)))
@@ -341,19 +342,19 @@ def aggregate_scores(
         out_filename = os.path.join(score_dir, out_filename)
         with open(out_filename, mode="w", encoding="utf-8") as file_handler:
             for score in score_list:
-                file_handler.write(f"{score}\n")
+                _ = file_handler.write(f"{score}\n")
         score_array = np.array(score_list)
         print(
             f"{score_type}: "
-            f"mean={np.mean(score_array):.6f}, "
-            f"median={np.median(score_array):.6f}, "
-            f"std={np.std(score_array):.6f}, "
-            f"max={np.max(score_array):.6f}, "
-            f"min={np.min(score_array):.6f}"
+            + f"mean={np.mean(score_array):.6f}, "
+            + f"median={np.median(score_array):.6f}, "
+            + f"std={np.std(score_array):.6f}, "
+            + f"max={np.max(score_array):.6f}, "
+            + f"min={np.min(score_array):.6f}"
         )
 
 
-def load_logamp(is_train=False) -> list[str]:
+def load_logamp(is_train: bool = False) -> list[str]:
     """Load file paths for log-amplitude spectrogram.
 
     Args:
@@ -400,7 +401,7 @@ def load_logamp(is_train=False) -> list[str]:
     return logamp_list
 
 
-def load_phase(is_train=False) -> list[str]:
+def load_phase(is_train: bool = False) -> list[str]:
     """Load file paths for phase spectrogram.
 
     Args:
@@ -459,7 +460,7 @@ def main() -> None:
 
     # load DNN parameters
     model = load_checkpoint()
-    model.eval()
+    _ = model.eval()
 
     # load list of file paths for log-amplitude spectrogram
     logamp_list = load_logamp()
