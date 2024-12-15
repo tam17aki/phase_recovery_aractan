@@ -32,7 +32,7 @@ from tqdm import tqdm
 import config
 from dataset import get_dataloader
 from factory import get_loss, get_lr_scheduler, get_optimizer
-from model import PhaseRecoveryNet
+from model import get_model
 
 
 def main() -> None:
@@ -54,7 +54,7 @@ def main() -> None:
 
     # instantiate modules
     dataloader = get_dataloader()
-    model = PhaseRecoveryNet().cuda()
+    model = get_model().cuda()
     loss_func = get_loss(model)
     optimizer = get_optimizer(model)
     lr_scheduler = None
