@@ -84,7 +84,7 @@ class CustomLoss(nn.Module):
         super(nn.Module).__init__()
         self.model: PhaseRecoveryNet = model
 
-    def forward(self, batch: tuple[torch.Tensor, torch.Tensor]) -> torch.Tensor:
+    def forward(self, batch: tuple[torch.Tensor, torch.Tensor]) -> torch.Tensor:  # pyright: ignore[reportImplicitOverride]
         """Compute loss function.
 
         Args:
