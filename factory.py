@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import override
+
 import torch
 from timm.scheduler.cosine_lr import CosineLRScheduler
 from torch import nn, optim
@@ -84,7 +86,8 @@ class CustomLoss(nn.Module):
         super(nn.Module).__init__()
         self.model: PhaseRecoveryNet = model
 
-    def forward(self, batch: tuple[torch.Tensor, torch.Tensor]) -> torch.Tensor:  # pyright: ignore[reportImplicitOverride]
+    @override
+    def forward(self, batch: tuple[torch.Tensor, torch.Tensor]) -> torch.Tensor:
         """Compute loss function.
 
         Args:
