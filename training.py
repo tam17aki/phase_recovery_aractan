@@ -81,7 +81,7 @@ def main() -> None:
             loss.backward()
             if cfg.use_grad_clip:
                 _ = nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_max_norm)
-            optimizer.step()
+            _ = optimizer.step()
         if lr_scheduler is not None:
             lr_scheduler.step(epoch)
         epoch_loss = epoch_loss / len(dataloader)
