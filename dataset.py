@@ -24,6 +24,7 @@ SOFTWARE.
 
 import os
 from dataclasses import dataclass
+from typing import override
 
 import numpy as np
 import numpy.typing as npt
@@ -58,6 +59,7 @@ class PhaseRecoveryDataset(
         """
         return len(self.logamp_paths)
 
+    @override
     def __getitem__(
         self, idx: int
     ) -> tuple[npt.NDArray[np.float32], npt.NDArray[np.float32]]:
