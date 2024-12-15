@@ -22,18 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import final
+
 import torch
 from torch import nn
 
 import config
 
 
+@final
 class PreNet(nn.Module):
     """PreNet module."""
 
     def __init__(self):
         """Initialize class."""
-        super().__init__()
+        super(nn.Module).__init__()
         cfg = config.ModelConfig()
         in_channels = cfg.input_channels
         hid_channels = cfg.hidden_channels
@@ -43,18 +46,19 @@ class PreNet(nn.Module):
             nn.Conv1d(hid_channels, hid_channels, 1),
         )
 
-    def forward(self, inputs) -> torch.Tensor:
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         inputs = inputs - torch.mean(inputs, dim=-1, keepdim=True)
         return self.net(inputs)
 
 
+@final
 class ResidualBlock(nn.Module):
     """Residual Block module for MiddleNet."""
 
     def __init__(self):
         """Initialize class."""
-        super().__init__()
+        super(nn.Module).__init__()
         cfg = config.ModelConfig()
         hid_channels = cfg.hidden_channels
         kernel_size = cfg.kernel_size
@@ -78,35 +82,37 @@ class ResidualBlock(nn.Module):
             ),
         )
 
-    def forward(self, inputs) -> torch.Tensor:
+    def forward(self, inputs: nn.Module) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.convs(inputs)
         hidden = hidden + inputs
         return hidden
 
 
+@final
 class MiddleNet(nn.Module):
     """MiddleNet module."""
 
     def __init__(self):
         """Initialize class."""
-        super().__init__()
+        super(nn.Module).__init__()
         cfg = config.ModelConfig()
         resnet = nn.ModuleList([ResidualBlock() for _ in range(cfg.n_resblock)])
         self.resnet = nn.Sequential(*resnet)
 
-    def forward(self, inputs) -> torch.Tensor:
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.resnet(inputs)
         return hidden
 
 
+@final
 class PostNetBlock(nn.Module):
     """Residual Block module for PostNet."""
 
     def __init__(self):
         """Initialize class."""
-        super().__init__()
+        super(nn.Module).__init__()
         cfg = config.ModelConfig()
         hid_channels = cfg.hidden_channels_post
         kernel_size = cfg.kernel_size
@@ -137,7 +143,7 @@ class PostNetBlock(nn.Module):
         )
         self.proj = nn.Conv1d(2 * hid_channels, cfg.hidden_channels, 1)
 
-    def forward(self, inputs) -> torch.Tensor:
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.convs(inputs)
         hidden, _ = self.rnn(hidden.transpose(1, 2))
@@ -146,28 +152,30 @@ class PostNetBlock(nn.Module):
         return hidden
 
 
+@final
 class PostNet(nn.Module):
     """PostNet module."""
 
     def __init__(self):
         """Initialize class."""
-        super().__init__()
+        super(nn.Module).__init__()
         cfg = config.ModelConfig()
         postnet = nn.ModuleList([PostNetBlock() for _ in range(cfg.n_postblock)])
         self.postnet = nn.Sequential(*postnet)
 
-    def forward(self, inputs) -> torch.Tensor:
+    def forward(self, inputs: nn.Module) -> torch.Tensor:
         """Forward propagation."""
         outputs = self.postnet(inputs)
         return outputs
 
 
+@final
 class PhaseRecoveryNet(nn.Module):
     """Phase recovery via arctangent with neural network."""
 
     def __init__(self):
         """Initialize class."""
-        super().__init__()
+        super(nn.Module).__init__()
         model_cfg = config.ModelConfig()
         feat_cfg = config.FeatureConfig()
         assert feat_cfg.n_fft // 2 + 1 == model_cfg.input_channels
@@ -178,7 +186,7 @@ class PhaseRecoveryNet(nn.Module):
             model_cfg.hidden_channels, 2 * (feat_cfg.n_fft // 2 + 1), 1
         )
 
-    def forward(self, inputs) -> torch.Tensor:
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Recover phase from log-amplitude spectrum.
 
         Args:
