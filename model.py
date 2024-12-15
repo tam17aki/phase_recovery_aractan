@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import final
+from typing import final, override
 
 import torch
 from torch import nn
@@ -46,6 +46,7 @@ class PreNet(nn.Module):
             nn.Conv1d(hid_channels, hid_channels, 1),
         )
 
+    @override
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         inputs = inputs - torch.mean(inputs, dim=-1, keepdim=True)
@@ -82,6 +83,7 @@ class ResidualBlock(nn.Module):
             ),
         )
 
+    @override
     def forward(self, inputs: nn.Module) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.convs(inputs)
@@ -100,6 +102,7 @@ class MiddleNet(nn.Module):
         resnet = nn.ModuleList([ResidualBlock() for _ in range(cfg.n_resblock)])
         self.resnet = nn.Sequential(*resnet)
 
+    @override
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.resnet(inputs)
@@ -143,6 +146,7 @@ class PostNetBlock(nn.Module):
         )
         self.proj = nn.Conv1d(2 * hid_channels, cfg.hidden_channels, 1)
 
+    @override
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward propagation."""
         hidden = self.convs(inputs)
@@ -163,6 +167,7 @@ class PostNet(nn.Module):
         postnet = nn.ModuleList([PostNetBlock() for _ in range(cfg.n_postblock)])
         self.postnet = nn.Sequential(*postnet)
 
+    @override
     def forward(self, inputs: nn.Module) -> torch.Tensor:
         """Forward propagation."""
         outputs = self.postnet(inputs)
@@ -186,6 +191,7 @@ class PhaseRecoveryNet(nn.Module):
             model_cfg.hidden_channels, 2 * (feat_cfg.n_fft // 2 + 1), 1
         )
 
+    @override
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Recover phase from log-amplitude spectrum.
 
