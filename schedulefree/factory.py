@@ -25,8 +25,8 @@ SOFTWARE.
 from typing import override
 
 import torch
+import torch.nn
 from schedulefree.radam_schedulefree import RAdamScheduleFree
-from torch import nn
 
 import config
 from model import PhaseRecoveryNet
@@ -36,7 +36,7 @@ def get_optimizer(model: PhaseRecoveryNet) -> RAdamScheduleFree:
     """Instantiate optimizer.
 
     Args:
-        model (nn.Module): network parameters.
+        model (PhaseRecoveryNet): network parameters.
 
     Returns:
         optimizer (RAdamScheduleFree): RAdamScheduleFree.
@@ -47,7 +47,7 @@ def get_optimizer(model: PhaseRecoveryNet) -> RAdamScheduleFree:
     )
 
 
-class CustomLoss(nn.Module):
+class CustomLoss(torch.nn.Module):
     """Custom loss."""
 
     def __init__(self, model: PhaseRecoveryNet) -> None:
