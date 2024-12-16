@@ -54,7 +54,7 @@ def main() -> None:
 
     # instantiate modules
     dataloader = get_dataloader()
-    model = get_model()
+    model = get_model().cuda()
     loss_func = get_loss(model)
     optimizer = get_optimizer(model)
 
