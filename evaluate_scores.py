@@ -180,7 +180,7 @@ def compute_lsc(basename: str) -> np.float64:
     eval_abs = np.abs(stfft.stft(eval_wav))
     lsc = np.linalg.norm(ref_abs - eval_abs)
     lsc = lsc / np.linalg.norm(ref_abs)
-    lsc: np.float64 = 20 * np.log10(lsc)
+    lsc = 20 * np.log10(lsc)
     return lsc
 
 
