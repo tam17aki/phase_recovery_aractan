@@ -36,7 +36,7 @@ class PreNet(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(PreNet, self).__init__()
+        super().__init__()
         cfg = config.ModelConfig()
         in_channels = cfg.input_channels
         hid_channels = cfg.hidden_channels
@@ -60,7 +60,7 @@ class ResidualBlock(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(ResidualBlock, self).__init__()
+        super().__init__()
         cfg = config.ModelConfig()
         hid_channels = cfg.hidden_channels
         kernel_size = cfg.kernel_size
@@ -98,7 +98,7 @@ class MiddleNet(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(MiddleNet, self).__init__()
+        super().__init__()
         cfg = config.ModelConfig()
         resnet = nn.ModuleList([ResidualBlock() for _ in range(cfg.n_resblock)])
         self.resnet = nn.Sequential(*resnet)
@@ -116,7 +116,7 @@ class PostNetBlock(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(PostNetBlock, self).__init__()
+        super().__init__()
         cfg = config.ModelConfig()
         hid_channels = cfg.hidden_channels_post
         kernel_size = cfg.kernel_size
@@ -163,7 +163,7 @@ class PostNet(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(PostNet, self).__init__()
+        super().__init__()
         cfg = config.ModelConfig()
         postnet = nn.ModuleList([PostNetBlock() for _ in range(cfg.n_postblock)])
         self.postnet = nn.Sequential(*postnet)
@@ -181,7 +181,7 @@ class PhaseRecoveryNet(nn.Module):
 
     def __init__(self):
         """Initialize class."""
-        super(PhaseRecoveryNet, self).__init__()
+        super().__init__()
         model_cfg = config.ModelConfig()
         feat_cfg = config.FeatureConfig()
         assert feat_cfg.n_fft // 2 + 1 == model_cfg.input_channels
