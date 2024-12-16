@@ -29,7 +29,7 @@ from dataclasses import dataclass
 class PathConfig:
     """Dataclass for path config."""
 
-    root_dir: str = "/work/tamamori/phase_recovery/"
+    root_dir: str = "/work/tamamori/phase_recovery_arctan/"
     data_dir: str = "data/"
     trainset_dir: str = "basic5000/"
     evalset_dir: str = "onoma300/"
