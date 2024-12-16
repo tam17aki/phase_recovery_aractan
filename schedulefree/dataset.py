@@ -24,6 +24,7 @@ SOFTWARE.
 
 import os
 from dataclasses import dataclass
+from typing import override
 
 import numpy as np
 import numpy.typing as npt
@@ -47,8 +48,8 @@ class PhaseRecoveryDataset(
 
     def __init__(self, feat_paths: FeatPath) -> None:
         """Initialize class."""
-        self.logamp_paths = feat_paths.logamp
-        self.phase_paths = feat_paths.phase
+        self.logamp_paths: list[str] = feat_paths.logamp
+        self.phase_paths: list[str] = feat_paths.phase
 
     def __len__(self) -> int:
         """Return the size of the dataset.
@@ -58,6 +59,7 @@ class PhaseRecoveryDataset(
         """
         return len(self.logamp_paths)
 
+    @override
     def __getitem__(
         self, idx: int
     ) -> tuple[npt.NDArray[np.float32], npt.NDArray[np.float32]]:
@@ -72,7 +74,9 @@ class PhaseRecoveryDataset(
         return (np.load(self.logamp_paths[idx]), np.load(self.phase_paths[idx]))
 
 
-def get_dataloader() -> DataLoader:
+def get_dataloader() -> (
+    DataLoader[tuple[npt.NDArray[np.float32], npt.NDArray[np.float32]]]
+):
     """Get a dataloader for training.
 
     Returns:
