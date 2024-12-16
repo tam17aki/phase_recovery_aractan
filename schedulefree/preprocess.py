@@ -30,8 +30,9 @@ from concurrent.futures import ProcessPoolExecutor
 import librosa
 import numpy as np
 import soundfile as sf
-from pydub import AudioSegment
+from pydub.audio_segment import AudioSegment
 from scipy import signal
+from scipy.signal.windows import get_window
 from tqdm import tqdm
 
 import config
@@ -64,7 +65,7 @@ def resample_wav(sample_rate: int = 44100, is_train: bool = True) -> None:
         wav_list,
         desc="Resampling wave files",
         bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
-        " Elapsed Time: {elapsed} ETA: {remaining} ",
+        + " Elapsed Time: {elapsed} ETA: {remaining} ",
         ascii=" #",
     ):
         wav_path = os.path.join(wav_dir, wav_name)
@@ -104,7 +105,7 @@ def split_utterance() -> None:
         wav_list,
         desc="Splitting utterances",
         bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
-        " Elapsed Time: {elapsed} ETA: {remaining} ",
+        + " Elapsed Time: {elapsed} ETA: {remaining} ",
         ascii=" #",
     ):
         audio = AudioSegment.from_wav(wav_name)
@@ -113,7 +114,7 @@ def split_utterance() -> None:
             basename, ext = os.path.splitext(wav_name)
             split_fn = basename + "_" + str(i) + ext
             out_file = os.path.join(out_dir, os.path.basename(split_fn))
-            split_audio = audio[i * 1000 : (i + sec_per_split) * 1000]
+            split_audio = audio[i * 1000 : int((i + sec_per_split) * 1000)]
             if split_audio.duration_seconds > (sec_per_split - 0.01):
                 split_audio.export(out_file, format="wav")
 
@@ -150,7 +151,7 @@ def _extract_feature(utt_id: str, feat_dir: str, is_train: bool) -> None:
     audio = audio.astype(np.float64)
 
     stfft = signal.ShortTimeFFT(
-        win=signal.get_window(feat_cfg.window, feat_cfg.win_length),
+        win=get_window(feat_cfg.window, feat_cfg.win_length),
         hop=feat_cfg.hop_length,
         fs=rate,
         mfft=feat_cfg.n_fft,
@@ -169,7 +170,7 @@ def _extract_feature(utt_id: str, feat_dir: str, is_train: bool) -> None:
     )
 
 
-def extract_feature(is_train=True) -> None:
+def extract_feature(is_train: bool = True) -> None:
     """Extract acoustic features.
 
     Args:
@@ -202,7 +203,7 @@ def extract_feature(is_train=True) -> None:
             futures,
             desc="Extracting acoustic features",
             bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
-            " Elapsed Time: {elapsed} ETA: {remaining} ",
+            + " Elapsed Time: {elapsed} ETA: {remaining} ",
             ascii=" #",
         ):
             future.result()  # return None
