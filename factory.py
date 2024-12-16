@@ -25,8 +25,9 @@ SOFTWARE.
 from typing import override
 
 import torch
+import torch.nn
 from timm.scheduler.cosine_lr import CosineLRScheduler
-from torch import nn, optim
+from torch import optim
 from torch.optim.optimizer import Optimizer
 
 import config
@@ -37,7 +38,7 @@ def get_optimizer(model: PhaseRecoveryNet) -> optim.RAdam | optim.AdamW:
     """Instantiate optimizer.
 
     Args:
-        model (nn.Module): network parameters.
+        model (PhaseRecoveryNet): network parameters.
 
     Returns:
         optimizer (Optimizer): RAdam or AdamW.
@@ -74,7 +75,7 @@ def get_lr_scheduler(optimizer: Optimizer) -> CosineLRScheduler:
     return lr_scheduler
 
 
-class CustomLoss(nn.Module):
+class CustomLoss(torch.nn.Module):
     """Custom loss."""
 
     def __init__(self, model: PhaseRecoveryNet) -> None:
