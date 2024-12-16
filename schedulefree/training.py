@@ -59,16 +59,16 @@ def main() -> None:
     optimizer = get_optimizer(model)
 
     # print summary of the network architecture and the number of parameters.
-    summary(model, depth=4)
+    _ = summary(model, depth=4)
 
     # perform training loop
-    model.train()
+    _ = model.train()
     optimizer.train()
     for epoch in tqdm(
         range(1, cfg.n_epoch + 1),
         desc="Model training",
         bar_format="{desc}: {percentage:3.0f}% ({n_fmt} of {total_fmt}) |{bar}|"
-        " Elapsed Time: {elapsed} ETA: {remaining} ",
+        + " Elapsed Time: {elapsed} ETA: {remaining} ",
         ascii=" #",
     ):
         epoch_loss = 0.0
@@ -78,8 +78,8 @@ def main() -> None:
             epoch_loss += loss.item()
             loss.backward()
             if cfg.use_grad_clip:
-                nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_max_norm)
-            optimizer.step()
+                _ = nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_max_norm)
+            _ = optimizer.step()
         epoch_loss = epoch_loss / len(dataloader)
         if epoch == 1 or epoch % cfg.report_interval == 0:
             print(f"\nEpoch {epoch}: loss={epoch_loss:.12f}")
