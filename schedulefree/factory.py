@@ -22,8 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import override
+
 import torch
-from schedulefree import RAdamScheduleFree
+from schedulefree.radam_schedulefree import RAdamScheduleFree
 from torch import nn
 
 import config
@@ -54,9 +56,10 @@ class CustomLoss(nn.Module):
         Args:
             model (PhaseRecoveryNet): neural network to estimate phase spectrum.
         """
-        super().__init__()
-        self.model = model
+        super(CustomLoss, self).__init__()
+        self.model: PhaseRecoveryNet = model
 
+    @override
     def forward(self, batch: tuple[torch.Tensor, torch.Tensor]) -> torch.Tensor:
         """Compute loss function.
 
@@ -69,7 +72,7 @@ class CustomLoss(nn.Module):
         logamp, target_phase = batch
         logamp = logamp.cuda().float()
         target_phase = target_phase.cuda().float()
-        pred_phase = self.model(logamp)
+        pred_phase: torch.Tensor = self.model(logamp)
 
         target_ifreq = torch.diff(target_phase, dim=2)
         target_grd = -torch.diff(target_phase, dim=1)
@@ -77,20 +80,17 @@ class CustomLoss(nn.Module):
         pred_grd = -torch.diff(pred_phase, dim=1)
 
         loss_cos = -torch.cos(pred_phase - target_phase)
-        loss_cos = torch.sum(loss_cos, dim=-1)
-        loss_cos = torch.sum(loss_cos, dim=-1)
+        loss_cos = torch.sum(loss_cos, dim=(1, 2))
         loss_cos_ifreq = -torch.cos(pred_ifreq - target_ifreq)
-        loss_cos_ifreq = torch.sum(loss_cos_ifreq, dim=-1)
-        loss_cos_ifreq = torch.sum(loss_cos_ifreq, dim=-1)
+        loss_cos_ifreq = torch.sum(loss_cos_ifreq, dim=(1, 2))
         loss_cos_grd = -torch.cos(pred_grd - target_grd)
-        loss_cos_grd = torch.sum(loss_cos_grd, dim=-1)
-        loss_cos_grd = torch.sum(loss_cos_grd, dim=-1)
+        loss_cos_grd = torch.sum(loss_cos_grd, dim=(1, 2))
 
         loss = (loss_cos + loss_cos_ifreq + loss_cos_grd).mean()
         return loss
 
 
-def get_loss(model):
+def get_loss(model: PhaseRecoveryNet) -> CustomLoss:
     """Instantiate customized loss.
 
     Args:
