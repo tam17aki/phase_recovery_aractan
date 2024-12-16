@@ -25,8 +25,8 @@ SOFTWARE.
 from typing import override
 
 import torch
-from schedulefree.radam_schedulefree import RAdamScheduleFree
 from torch import nn
+from schedulefree.radam_schedulefree import RAdamScheduleFree
 
 import config
 from model import PhaseRecoveryNet
