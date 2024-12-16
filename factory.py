@@ -83,7 +83,7 @@ class CustomLoss(nn.Module):
         Args:
             model (PhaseRecoveryNet): neural network to estimate phase spectrum.
         """
-        super(nn.Module, self).__init__()
+        super(CustomLoss, self).__init__()
         self.model: PhaseRecoveryNet = model
 
     @override
@@ -107,14 +107,11 @@ class CustomLoss(nn.Module):
         pred_grd = -torch.diff(pred_phase, dim=1)
 
         loss_cos = -torch.cos(pred_phase - target_phase)
-        loss_cos = torch.sum(loss_cos, dim=-1)
-        loss_cos = torch.sum(loss_cos, dim=-1)
+        loss_cos = torch.sum(loss_cos, dim=(1, 2))
         loss_cos_ifreq = -torch.cos(pred_ifreq - target_ifreq)
-        loss_cos_ifreq = torch.sum(loss_cos_ifreq, dim=-1)
-        loss_cos_ifreq = torch.sum(loss_cos_ifreq, dim=-1)
+        loss_cos_ifreq = torch.sum(loss_cos_ifreq, dim=(1, 2))
         loss_cos_grd = -torch.cos(pred_grd - target_grd)
-        loss_cos_grd = torch.sum(loss_cos_grd, dim=-1)
-        loss_cos_grd = torch.sum(loss_cos_grd, dim=-1)
+        loss_cos_grd = torch.sum(loss_cos_grd, dim=(1, 2))
 
         loss = (loss_cos + loss_cos_ifreq + loss_cos_grd).mean()
         return loss
