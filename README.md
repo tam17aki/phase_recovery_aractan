@@ -7,7 +7,7 @@ MIT licence.
 Copyright (C) 2024 Akira Tamamori
 
 ## Dependencies
-We tested the implemention on Ubuntu 22.04. The verion of Python was `3.10.12`. The following modules are required:
+We tested the implemention on Ubuntu 24.04. The verion of Python was `3.12.3`. The following modules are required:
 
 - joblib
 - librosa
