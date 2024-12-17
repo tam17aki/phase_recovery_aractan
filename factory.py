@@ -41,7 +41,7 @@ def get_optimizer(model: PhaseRecoveryNet) -> optim.RAdam | optim.AdamW:
         model (PhaseRecoveryNet): network parameters.
 
     Returns:
-        optimizer (Optimizer): RAdam or AdamW.
+        optimizer (optim.RAdam or optim.AdamW): optimizer for PhaseRecoveryNet.
     """
     cfg = config.OptimizerConfig()
     if cfg.name == "RAdam":
@@ -95,7 +95,7 @@ class CustomLoss(torch.nn.Module):
             batch (Tuple): tuple of minibatch.
 
         Returns:
-            loss (Tensor): cosine loss.
+            loss (torch.Tensor): cosine loss.
         """
         logamp, target_phase = batch
         logamp = logamp.cuda().float()
