@@ -28,7 +28,6 @@ import torch
 import torch.nn
 from timm.scheduler.cosine_lr import CosineLRScheduler
 from torch import optim
-from torch.optim.optimizer import Optimizer
 
 import config
 from model import PhaseRecoveryNet
@@ -54,11 +53,11 @@ def get_optimizer(model: PhaseRecoveryNet) -> optim.RAdam | optim.AdamW:
     return optim.AdamW(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
 
 
-def get_lr_scheduler(optimizer: Optimizer) -> CosineLRScheduler:
+def get_lr_scheduler(optimizer: optim.RAdam | optim.AdamW) -> CosineLRScheduler:
     """Instantiate scheduler.
 
     Args:
-        optimizer (Optimizer): Wrapped optimizer.
+        optimizer (optim.RAdam or optim.AdamW): optimizer for PhaseRecoveryNet.
 
     Returns:
         lr_scheduler (CosineLRScheduler): cosine scheduler w/ warmup.
